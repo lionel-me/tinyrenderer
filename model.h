@@ -1,3 +1,11 @@
+/**
+ *
+ * @copyright Copyright (c) 2023 lionel-me
+ *
+ */
+#ifndef MODEL_H_
+#define MODEL_H_
+
 #include <string>
 #include <vector>
 
@@ -15,10 +23,10 @@ class Model {
   TGAImage normalmap{};    // normal map texture
   TGAImage specularmap{};  // specular map texture
   void load_texture(const std::string filename, const std::string suffix,
-                    TGAImage& img);
+                    const TGAImage& img);
 
  public:
-  Model(const std::string filename);
+  explicit Model(const std::string filename);
   int nverts() const;
   int nfaces() const;
   vec3 normal(const int iface,
@@ -31,3 +39,5 @@ class Model {
   const TGAImage& diffuse() const { return diffusemap; }
   const TGAImage& specular() const { return specularmap; }
 };
+
+#endif  // MODEL_H_

@@ -1,3 +1,8 @@
+/**
+ *
+ * @copyright Copyright (c) 2023 lionel-me
+ *
+ */
 #include <limits>
 
 #include "model.h"
@@ -21,13 +26,14 @@ struct Shader : IShader {
   mat<3, 3> varying_nrm;  // normal per vertex to be interpolated by FS
   mat<3, 3> view_tri;     // triangle in view coordinates
 
-  Shader(const Model &m) : model(m) {
+  explicit Shader(const Model &m) : model(m) {
     uniform_l =
         proj<3>((ModelView * embed<4>(light_dir, 0.)))
             .normalized();  // transform the light vector to view coordinates
   }
 
-  virtual void vertex(const int iface, const int nthvert, vec4 &gl_Position) {
+  virtual void vertex(const int iface, const int nthvert,
+                      const vec4 &gl_Position) {
     varying_uv.set_col(nthvert, model.uv(iface, nthvert));
     varying_nrm.set_col(nthvert,
                         proj<3>((ModelView).invert_transpose() *
@@ -37,7 +43,7 @@ struct Shader : IShader {
     gl_Position = Projection * gl_Position;
   }
 
-  virtual bool fragment(const vec3 bar, TGAColor &gl_FragColor) {
+  virtual bool fragment(const vec3 &bar, const TGAColor &gl_FragColor) {
     vec3 bn =
         (varying_nrm * bar).normalized();  // per-vertex normal interpolation
     vec2 uv = varying_uv * bar;            // tex coord interpolation

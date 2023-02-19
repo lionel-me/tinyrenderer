@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.1)
 project(tinyrenderer)
+include_directories(${CMAKE_SOURCE_DIR})
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,4 +19,3 @@ endif()
 file(GLOB SOURCES *.h *.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
-

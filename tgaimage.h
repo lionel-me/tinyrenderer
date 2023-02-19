@@ -1,6 +1,12 @@
+/**
+ *
+ * @copyright Copyright (c) 2023 lionel-me
+ *
+ */
 #pragma once
 #include <cstdint>
 #include <fstream>
+#include <string>
 #include <vector>
 
 #pragma pack(push, 1)

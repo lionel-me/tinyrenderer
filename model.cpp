@@ -1,3 +1,8 @@
+/**
+ *
+ * @copyright Copyright (c) 2023 lionel-me
+ *
+ */
 #include "model.h"
 
 #include <iostream>
@@ -74,7 +79,9 @@ void Model::load_texture(std::string filename, const std::string suffix,
 vec3 Model::normal(const vec2 &uvf) const {
   TGAColor c =
       normalmap.get(uvf[0] * normalmap.width(), uvf[1] * normalmap.height());
-  return vec3{(double)c[2], (double)c[1], (double)c[0]} * 2. / 255. -
+  return vec3{static_cast<double>(c[2]), static_cast<double>(c[1]),  // NOLINT
+              static_cast<double>(c[0])} *
+             2. / 255. -
          vec3{1, 1, 1};
 }
 

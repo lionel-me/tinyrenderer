@@ -1,4 +1,11 @@
+/**
+ *
+ * @copyright Copyright (c) 2023 lionel-me
+ *
+ */
 #include "our_gl.h"
+
+#include <algorithm>
 
 mat<4, 4> ModelView;
 mat<4, 4> Viewport;
@@ -42,8 +49,8 @@ vec3 barycentric(const vec2 tri[3], const vec2 P) {
   return ABC.invert_transpose() * embed<3>(P);
 }
 
-void triangle(const vec4 clip_verts[3], IShader &shader, TGAImage &image,
-              std::vector<double> &zbuffer) {
+void triangle(const vec4 clip_verts[3], const IShader &shader,
+              const TGAImage &image, const std::vector<double> &zbuffer) {
   vec4 pts[3] = {
       Viewport * clip_verts[0], Viewport * clip_verts[1],
       Viewport *
@@ -76,8 +83,9 @@ void triangle(const vec4 clip_verts[3], IShader &shader, TGAImage &image,
            bc_clip
                .z);  // check
                      // https://github.com/ssloy/tinyrenderer/wiki/Technical-difficulties-linear-interpolation-with-perspective-deformations
-      double frag_depth =
-          vec3{clip_verts[0][2], clip_verts[1][2], clip_verts[2][2]} * bc_clip;
+      double frag_depth = vec3{clip_verts[0][2], clip_verts[1][2],  // NOLINT
+                               clip_verts[2][2]} *
+                          bc_clip;
       if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0 ||
           frag_depth > zbuffer[x + y * image.width()])
         continue;

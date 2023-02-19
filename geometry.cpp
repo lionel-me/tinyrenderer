@@ -1,3 +1,8 @@
+/**
+ *
+ * @copyright Copyright (c) 2023 lionel-me
+ *
+ */
 #include "geometry.h"
 
 vec3 cross(const vec3 &v1, const vec3 &v2) {
