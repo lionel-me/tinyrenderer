@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "cschlosser.doxdocgen",
+    "eamodio.gitlens",
+    "editorconfig.editorconfig",
+    "golang.go"
+    "ms-vscode.cmake-tools",
+    "ms-vscode.cpptools",
+    "qiumingge.cpp-check-lint",
+    "streetsidesoftware.code-spell-checker",
+    "twxs.cmake",
+    "wayou.vscode-todo-highlight",
+  ]
+}

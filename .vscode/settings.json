@@ -1,0 +1,61 @@
+{
+  "editor.tabSize": 2,
+  "files.autoSave": "onFocusChange",
+  "doxdocgen.file.copyrightTag": [
+    "@copyright Copyright (c) {year} Tsingroc"
+  ],
+  "C_Cpp.default.cppStandard": "c++17",
+  "C_Cpp.default.cStandard": "c17",
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "cSpell.words": [
+    "ABSL",
+    "aowenxuan",
+    "bslist",
+    "Bson",
+    "bsoncxx",
+    "cmake",
+    "cpprestsdk",
+    "dylib",
+    "elec",
+    "EPSG",
+    "gongyu",
+    "grpc",
+    "gtest",
+    "libcurl",
+    "librdkafka",
+    "mongocxx",
+    "pbtrip",
+    "pois",
+    "protobuf",
+    "SASL",
+    "spdlog",
+    "tsingroc",
+    "Tsingroc",
+    "wolong",
+    "zhangjun"
+  ],
+  "todohighlight.keywords": [
+    {
+      "text": "TODO",
+      "color": "#fff",
+      "backgroundColor": "#fdbc3eaa",
+      "overviewRulerColor": "#fdbc3e",
+      "isWholeLine": true,
+    },
+    {
+      "text": "ATTENTION",
+      "color": "#fff",
+      "backgroundColor": "#f06292aa",
+      "overviewRulerColor": "#f06292",
+      "isWholeLine": true,
+    }
+  ],
+  "C_Cpp.clang_format_style": "file",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "editor.showUnused": true,
+  "cpp-check-lint.cppcheck.--enable=": "all",
+  "cpp-check-lint.cppcheck.--std_c++=": "c++17",
+  "cpp-check-lint.cpplint.--filter=": "-build/c++11,-build/include_subdir",
+  "C_Cpp.autoAddFileAssociations": false
+}
