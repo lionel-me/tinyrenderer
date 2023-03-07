@@ -90,8 +90,9 @@ Vec3f Model::normal(const Vec2f &uvf) const {
          Vec3f{1, 1, 1};
 }
 
-Vec2f Model::uv(const int iface, const int nthvert) const {
-  return tex_coord[facet_tex[iface * 3 + nthvert]];
+Vec2i Model::uv(const int iface, const int nthvert) const {
+  Vec2f coord = tex_coord[facet_tex[iface * 3 + nthvert]];
+  return Vec2i(coord.x * diffusemap.width(), coord.y * diffusemap.height());
 }
 
 Vec3f Model::normal(const int iface, const int nthvert) const {

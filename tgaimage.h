@@ -33,9 +33,9 @@ struct TGAColor {
   std::uint8_t bytespp = 4;             // bytes per pixel
   std::uint8_t &operator[](const int i) { return bgra[i]; }
   TGAColor() = default;
-  TGAColor(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a)
+  TGAColor(std::uint8_t b, std::uint8_t g, std::uint8_t r, std::uint8_t a)
       : bgra{b, g, r, a} {}
-  TGAColor(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a,
+  TGAColor(std::uint8_t b, std::uint8_t g, std::uint8_t r, std::uint8_t a,
            std::uint8_t bpp)
       : bgra{b, g, r, a}, bytespp{bpp} {}
 };
@@ -55,9 +55,6 @@ struct TGAImage {
   int width() const;
   int height() const;
   void draw_line(int x0, int y0, int x1, int y1, const TGAColor &c);
-  void draw_triangle(const TriangleS &triangle, const TGAColor &c);
-  void draw_triangle(const TriangleW &triangle, const TGAColor &c,
-                     float *z_buffer);
 
  private:
   bool load_rle_data(std::ifstream &in);

@@ -36,7 +36,7 @@ class Model {
   Vec3f vert(const int i) const;
   Vec3f vert(const int iface, const int nthvert) const;
   std::vector<int> face(const int iface) const;
-  Vec2f uv(const int iface, const int nthvert) const;
+  Vec2i uv(const int iface, const int nthvert) const;
   const TGAImage &diffuse() const { return diffusemap; }
   const TGAImage &specular() const { return specularmap; }
 };
