@@ -5,9 +5,12 @@
  */
 #include "tgaimage.h"
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <utility>
+
+#include "geometry.h"
 
 TGAImage::TGAImage(const int w, const int h, const int bpp)
     : w(w), h(h), bpp(bpp), data(w * h * bpp, 0) {}
@@ -233,3 +236,93 @@ void TGAImage::flip_vertically() {
 int TGAImage::width() const { return w; }
 
 int TGAImage::height() const { return h; }
+
+void TGAImage::draw_line(int x0, int y0, int x1, int y1, const TGAColor &c) {
+  bool steep = false;
+  if (std::abs(x1 - x0) < std::abs(y1 - y0)) {
+    std::swap(x0, y0);
+    std::swap(x1, y1);
+    steep = true;
+  }
+  if (x0 > x1) {
+    std::swap(x0, x1);
+    std::swap(y0, y1);
+  }
+  int dx = abs(x1 - x0);
+  int dy = abs(y1 - y0);
+  int add_err = 2 * dy;
+  int sub_err = 2 * dx;
+  int err = 0;
+  int y = y0;
+  for (int x = x0; x <= x1; x++) {
+    if (steep) {
+      this->set(y, x, c);
+    } else {
+      this->set(x, y, c);
+    }
+    err += add_err;
+    if (err >= dx) {
+      y += (y1 > y0 ? 1 : -1);
+      err -= sub_err;
+    }
+  }
+}
+
+void TGAImage::draw_triangle(const TriangleS &triangle, const TGAColor &c) {
+  int xmin = width() - 1, xmax = 0, ymin = height() - 1, ymax = 0;
+  for (int i = 0; i < 3; i++) {
+    Vec2i p = triangle[i];
+    xmin = std::max(std::min(xmin, p[0]), 0);
+    xmax = std::min(std::max(xmax, p[0]), width() - 1);
+    ymin = std::max(std::min(ymin, p[1]), 0);
+    ymax = std::min(std::max(ymax, p[1]), height() - 1);
+  }
+  for (int x = xmin; x <= xmax; x++) {
+    for (int y = ymin; y <= ymax; y++) {
+      Vec3f uv = triangle.barycentric(Vec2i(x, y));
+      if (uv.x < 0 || uv.y < 0 || uv.z < 0) continue;
+      set(x, y, c);
+    }
+  }
+}
+
+// the triangles are given in world coordinates between -1 and 1
+void TGAImage::draw_triangle(const TriangleW &triangle, const TGAColor &c,
+                             float *z_buffer) {
+  // TriangleS triangle_s{Vec2i((triangle[0].x + 1.) / 2 * width(),
+  //                            (triangle[0].y + 1.) / 2 * height()),
+  //                      Vec2i((triangle[1].x + 1.) / 2 * width(),
+  //                            (triangle[1].y + 1) / 2 * height()),
+  //                      Vec2i((triangle[2].x + 1.) / 2 * width(),
+  //                            (triangle[2].y + 1.) / 2 * height())};
+  // transfer to x:[0,width] and y:[0,height]
+  TriangleW triangle_i;
+  for (int i = 0; i < 3; i++) {
+    triangle_i[i] = Vec3f((triangle[i].x + 1) * width() / 2,
+                          (triangle[i].y + 1) * height() / 2, triangle[i].z);
+  }
+  double xmin = width() - 1., xmax = 0., ymin = height() - 1., ymax = 0.;
+  for (int i = 0; i < 3; i++) {
+    Vec3f p = triangle_i[i];
+    xmin = std::max(std::min(xmin, p[0]), 0.);
+    xmax = std::min(std::max(xmax, p[0]), width() - 1.);
+    ymin = std::max(std::min(ymin, p[1]), 0.);
+    ymax = std::min(std::max(ymax, p[1]), height() - 1.);
+  }
+  // printf("%f %f %f %f\n", xmin, xmax, ymin, ymax);
+  Vec3f pw;
+  for (pw.x = xmin; pw.x <= xmax; pw.x++) {
+    for (pw.y = ymin; pw.y <= ymax; pw.y++) {
+      // printf("%f %f \n", pw.x, pw.y);
+      Vec3f uv = triangle_i.barycentric(pw);
+      if (uv.x < 0 || uv.y < 0 || uv.z < 0) continue;
+      pw.z = 0;
+      for (int i = 0; i < 3; i++) pw.z += uv[i] * triangle[i][2];
+      int index = pw.x + pw.y * width();
+      if (z_buffer[index] < pw.z) {
+        z_buffer[index] = pw.z;
+        set(pw.x, pw.y, c);
+      }
+    }
+  }
+}

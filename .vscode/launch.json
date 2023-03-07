@@ -5,10 +5,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "simserver",
+      "name": "tinyrenderer",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/bin/simserver",
+      "program": "${workspaceFolder}/build/bin/tinyrenderer",
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

@@ -16,6 +16,21 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-file(GLOB SOURCES *.h *.cpp)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_library(utils
+  tgaimage.cpp
+  tgaimage.h
+  model.cpp
+  model.h
+  geometry.cpp
+  geometry.h
+)
+
+add_executable(tinyrenderer
+  main.cpp
+)
+
+target_link_libraries(tinyrenderer
+  PRIVATE utils
+)
