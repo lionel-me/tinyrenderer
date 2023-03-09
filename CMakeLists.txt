@@ -25,6 +25,10 @@ add_library(utils
   model.h
   geometry.cpp
   geometry.h
+  gl.cpp
+  gl.h
+  global.cpp
+  global.h
 )
 
 add_executable(tinyrenderer

@@ -3,13 +3,8 @@
  * @copyright Copyright (c) 2023 lionel-me
  *
  */
-#ifndef GLOBAL_H_
-#define GLOBAL_H_
-
-#include "model.h"
+#include "global.h"
 
 namespace global {
-extern Model *model;
+Model *model;
 }  // namespace global
-
-#endif  // GLOBAL_H_
