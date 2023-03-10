@@ -133,6 +133,7 @@ struct Vec2 {
   inline Vec2<t> operator*(double f) const { return Vec2<t>(u * f, v * f); }
   template <class>
   friend std::ostream& operator<<(std::ostream& s, Vec2<t>& v);
+  double norm() const { return std::sqrt(x * x + y * y); }
 };
 
 template <class t>
@@ -174,12 +175,12 @@ struct Vec3 {
     *this = (*this) * (l / norm());
     return *this;
   }
-  vec4 to_homogeneous() const {
+  vec4 to_homogeneous(const double& h) const {
     vec4 result;
     result[0] = x;
     result[1] = y;
     result[2] = z;
-    result[3] = 1;
+    result[3] = h;
     return result;
   }
 };
@@ -188,6 +189,24 @@ typedef Vec2<double> Vec2f;
 typedef Vec2<int> Vec2i;
 typedef Vec3<double> Vec3f;
 typedef Vec3<int> Vec3i;
+
+template <class t, int r, int c>
+struct Matrix;
+
+template <int dim, class t>
+struct dt {
+  static t det(const Matrix<t, dim, dim>& src) {
+    t ret = 0;
+    for (size_t i = dim; i--; ret += src[0][i] * src.cofactor(0, i)) {
+    }
+    return ret;
+  }
+};
+
+template <class t>
+struct dt<1, t> {
+  static t det(const Matrix<t, 1, 1>& src) { return src[0][0]; }
+};
 
 template <class t, int r, int c>
 struct Matrix {
@@ -216,15 +235,48 @@ struct Matrix {
     }
     return ret;
   }
-  vec<r> multiply(const vec<c>& a) const {
-    vec<r> ret;
-    for (int i = 0; i < row_; i++) {
-      for (int j = 0; j < col_; j++) {
-        ret[i] += rows[i][j] * a[j];
+  Matrix<t, r - 1, c - 1> minor(int row, int col) const {
+    Matrix<t, r - 1, c - 1> ret;
+    for (int i = 0; i < r - 1; i++)
+      for (int j = 0; j < c - 1; j++) {
+        ret[i][j] = rows[i < row ? i : i + 1][j < col ? j : j + 1];
+      }
+    return ret;
+  }
+  t det() const {
+    assert(r == c);
+    return dt<r, t>::det(*this);
+  }
+  t cofactor(int row, int col) const {
+    return minor(row, col).det() * ((row + col) % 2 ? -1 : 1);
+  }
+  Matrix<t, r, c> adjugate() const {
+    Matrix<t, r, c> ret;
+    for (int i = 0; i < r; i++) {
+      for (int j = 0; j < c; j++) {
+        ret[i][j] = cofactor(i, j);
       }
     }
     return ret;
   }
+  Matrix<t, r, c> invert_transpose() const {
+    Matrix<t, r, c> ret = adjugate();
+    t temp = 0;
+    for (int j = 0; j < c; j++) {
+      temp += rows[0][j] * ret[0][j];
+    }
+    return ret / temp;
+  }
+  Matrix<t, c, r> transpose() const {
+    Matrix<t, c, r> ret;
+    for (int i = 0; i < r; i++) {
+      for (int j = 0; j < c; j++) {
+        ret[j][i] = rows[i][j];
+      }
+    }
+    return ret;
+  }
+  Matrix<t, r, c> invert() const { return invert_transpose().transpose(); }
 };
 
 template <class t, int lr, int lc, int rc>
@@ -241,7 +293,26 @@ Matrix<t, lr, rc> operator*(const Matrix<t, lr, lc>& lhs,
   return result;
 }
 
-typedef Matrix<double, 4, 4> MatrixW;
+template <class t, int r, int c>
+Matrix<t, r, c> operator/(const Matrix<t, r, c>& lhs, const t& rhs) {
+  Matrix<t, r, c> result;
+  for (int i = 0; i < r; i++)
+    for (int j = 0; j < c; j++) {
+      result[i][j] = lhs[i][j] / rhs;
+    }
+  return result;
+}
+
+template <class t, int r, int c>
+std::ostream& operator<<(std::ostream& out, Matrix<t, r, c>& m) {
+  for (int i = 0; i < r; i++) {
+    for (int j = 0; j < c; j++) {
+      out << m[i][j] << " ";
+    }
+    out << std::endl;
+  }
+  return out;
+}
 
 template <class t, int l>
 Matrix<t, l, l> identity() {
@@ -249,6 +320,8 @@ Matrix<t, l, l> identity() {
   for (int i = 0; i < l; i++) ret[i][i] = 1;
   return ret;
 }
+
+typedef Matrix<double, 4, 4> MatrixW;
 
 struct TriangleS {
   Vec2i pts[3];

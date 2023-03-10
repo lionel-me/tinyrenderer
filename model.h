@@ -31,14 +31,17 @@ class Model {
   int nfaces() const;
   Vec3f normal(const int iface,
                const int nthvert) const;  // per triangle corner normal vertex
-  Vec3f normal(const Vec2f &uv)
-      const;  // fetch the normal vector from the normal map texture
+
   Vec3f vert(const int i) const;
   Vec3f vert(const int iface, const int nthvert) const;
   std::vector<int> face(const int iface) const;
-  Vec2i uv(const int iface, const int nthvert) const;
+  Vec2f uvf(const int iface, const int nthvert) const;
   const TGAImage &diffuse() const { return diffusemap; }
+  TGAColor diffuse(const Vec2f &uv) const;
+  const TGAImage &normal() const { return normalmap; }
+  Vec3f normal(const Vec2f &uv) const;
   const TGAImage &specular() const { return specularmap; }
+  TGAColor specular(const Vec2f &uv) const;
 };
 
 #endif  // MODEL_H_

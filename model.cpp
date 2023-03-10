@@ -52,7 +52,7 @@ Model::Model(const std::string filename) {
   std::cerr << "# v# " << nverts() << " f# " << nfaces() << " vt# "
             << tex_coord.size() << " vn# " << norms.size() << std::endl;
   load_texture(filename, "_diffuse.tga", &diffusemap);
-  load_texture(filename, "_nm_tangent.tga", &normalmap);
+  load_texture(filename, "_nm.tga", &normalmap);
   load_texture(filename, "_spec.tga", &specularmap);
 }
 
@@ -81,6 +81,16 @@ void Model::load_texture(const std::string filename, const std::string suffix,
             << std::endl;
 }
 
+Vec3f Model::normal(const int iface, const int nthvert) const {
+  return norms[facet_nrm[iface * 3 + nthvert]];
+}
+
+// texture
+Vec2f Model::uvf(const int iface, const int nthvert) const {
+  Vec2f coord = tex_coord[facet_tex[iface * 3 + nthvert]];
+  return coord;
+}
+
 Vec3f Model::normal(const Vec2f &uvf) const {
   TGAColor c =
       normalmap.get(uvf[0] * normalmap.width(), uvf[1] * normalmap.height());
@@ -90,11 +100,12 @@ Vec3f Model::normal(const Vec2f &uvf) const {
          Vec3f{1, 1, 1};
 }
 
-Vec2i Model::uv(const int iface, const int nthvert) const {
-  Vec2f coord = tex_coord[facet_tex[iface * 3 + nthvert]];
-  return Vec2i(coord.x * diffusemap.width(), coord.y * diffusemap.height());
+TGAColor Model::diffuse(const Vec2f &uvf) const {
+  return diffusemap.get(static_cast<int>(uvf.x * diffusemap.width()),
+                        static_cast<int>(uvf.y * diffusemap.height()));
 }
 
-Vec3f Model::normal(const int iface, const int nthvert) const {
-  return norms[facet_nrm[iface * 3 + nthvert]];
+TGAColor Model::specular(const Vec2f &uvf) const {
+  return specularmap.get(static_cast<int>(uvf.x * specularmap.width()),
+                         static_cast<int>(uvf.y * specularmap.height()));
 }

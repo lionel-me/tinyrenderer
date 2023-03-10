@@ -22,6 +22,10 @@ class GL {
   MatrixW model_view_;
   MatrixW projection_;
   MatrixW view_port_;
+  MatrixW m_;
+  MatrixW mit_;
+  MatrixW m_shadow_;
+  MatrixW invert_;
 
  public:
   void lookat(const Vec3f &eye, const Vec3f &center, const Vec3f &up);
@@ -30,7 +34,15 @@ class GL {
                 const int &height);
   vec4 transform(const vec4 &p);
   void draw_triangle(const TriangleW &triangle, const int &iface,
-                     TGAImage *image, int *z_buffer, const Vec3f &light_dir);
+                     TGAImage *image, double *z_buffer, const Vec3f &light_dir,
+                     Model *model, double *shadow_buffer);
+  void shadow_draw(const TriangleW &triangle, TGAImage *image,
+                   double *z_buffer);
+  void render(Model *model, TGAImage *image, double *z_buffer,
+              const Vec3f &light_dir, const MatrixW &sb_matrix,
+              double *shadow_buffer);
+  void shadow_render(Model *model, TGAImage *image, double *z_buffer);
+  MatrixW transform_matrix() const;
 };
 
 }  // namespace gl
